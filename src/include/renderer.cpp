@@ -31,11 +31,15 @@ void Renderer::initRender() {
     glEnableVertexAttribArray(0);
 
     marcher.compile();
-    
+    step_location = glGetUniformLocation(marcher.id, "max_steps");
+    epsilon_location = glGetUniformLocation(marcher.id, "epsilon");
+    far_location = glGetUniformLocation(marcher.id, "far_distance");
 }
 
 void Renderer::preRender() {
-
+    glUniform1i(step_location, max_steps);
+    glUniform1f(epsilon_location, epsilon);
+    glUniform1f(far_location, far_distance);
 }
 
 void Renderer::render() {

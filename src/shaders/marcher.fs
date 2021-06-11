@@ -5,9 +5,13 @@ in vec2 uv;
 
 uniform mat4 view_invers;
 uniform mat4 camera_invers;
+uniform int max_steps;
+uniform float epsilon;
+uniform float far_distance;
+
 
 int iter = 0;
-int max_iter = 100;
+int max_iter = 128;
 
 mat2 rot(float alpha)
 {
@@ -70,17 +74,14 @@ vec3 calculate_normal(in vec3 p)
 vec3 rayMarch(in vec3 ro, in vec3 rd)
 {
     float total_distance_traveled = 0.0;
-    const int NUMBER_OF_STEPS = 128;
-    const float MINIMUM_HIT_DISTANCE = 0.0005;
-    const float MAXIMUM_TRACE_DISTANCE = 10.0;
 
-    for (int i = 0; i < NUMBER_OF_STEPS; ++i)
+    for (int i = 0; i < max_steps; ++i)
     {
         vec3 current_position = ro + total_distance_traveled * rd;
 
         float distance_to_closest = map_the_world(current_position);
 
-        if (distance_to_closest < MINIMUM_HIT_DISTANCE) 
+        if (distance_to_closest < epsilon) 
         {
             vec3 normal = calculate_normal(current_position);
             vec3 light_position = vec3(2.0, -3.0, 3.0);
@@ -88,13 +89,13 @@ vec3 rayMarch(in vec3 ro, in vec3 rd)
             vec3 direction_to_light = normalize(current_position - light_position);
 
             float diffuse_intensity = max(0.0, dot(normal, direction_to_light));
-            float occ = 1 - float(i) / float(NUMBER_OF_STEPS);
+            float occ = 1 - float(i) / float(max_steps);
             float iter_clamp = float(iter) / float(max_iter);
 
-            return vec3(iter_clamp, 1.0, 1.0 - iter_clamp) * diffuse_intensity  * occ;
+            return vec3(iter_clamp, 1.0, 1.0 - iter_clamp)  * occ;
         }
 
-        if (total_distance_traveled > MAXIMUM_TRACE_DISTANCE)
+        if (total_distance_traveled > far_distance)
         {
             break;
         }
