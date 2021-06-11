@@ -8,10 +8,12 @@ uniform mat4 camera_invers;
 uniform int max_steps;
 uniform float epsilon;
 uniform float far_distance;
+uniform float shadow_intensity;
+uniform float shadow_bias;
 
 
-int iter = 0;
-int max_iter = 128;
+int max_iter = 512;
+int steps = 0;
 
 mat2 rot(float alpha)
 {
@@ -49,7 +51,6 @@ float DE(vec3 pos) {
 		// convert back to cartesian coordinates
 		z = zr*vec3(sin(theta)*cos(phi), sin(phi)*sin(theta), cos(theta));
 		z+=pos;
-        iter++;
 	}
 	return 0.5*log(r)*r/dr;
 }
@@ -58,7 +59,7 @@ float map_the_world(vec3 position){
     return DE(position);
 }
 
-vec3 calculate_normal(in vec3 p)
+vec3 calculteNormal(in vec3 p)
 {
     const vec3 small_step = vec3(0.00001, 0.0, 0.0);
 
@@ -71,37 +72,33 @@ vec3 calculate_normal(in vec3 p)
     return normalize(normal);
 }
 
-vec3 rayMarch(in vec3 ro, in vec3 rd)
+float rayMarch(vec3 origin, vec3 direction)
 {
-    float total_distance_traveled = 0.0;
-
-    for (int i = 0; i < max_steps; ++i)
-    {
-        vec3 current_position = ro + total_distance_traveled * rd;
-
-        float distance_to_closest = map_the_world(current_position);
-
-        if (distance_to_closest < epsilon) 
-        {
-            vec3 normal = calculate_normal(current_position);
-            vec3 light_position = vec3(2.0, -3.0, 3.0);
-
-            vec3 direction_to_light = normalize(current_position - light_position);
-
-            float diffuse_intensity = max(0.0, dot(normal, direction_to_light));
-            float occ = 1 - float(i) / float(max_steps);
-            float iter_clamp = float(iter) / float(max_iter);
-
-            return vec3(iter_clamp, 1.0, 1.0 - iter_clamp)  * occ;
-        }
-
-        if (total_distance_traveled > far_distance)
-        {
+    float ray_travel = 0.0;
+    
+    for (int i = 0; i < max_steps; ++i) {
+        vec3 position = origin + ray_travel * direction;
+        float scene_distance = map_the_world(position);
+        ray_travel += scene_distance;
+        if (ray_travel > far_distance || scene_distance < epsilon) {
+            steps = i;
             break;
-        }
-        total_distance_traveled += distance_to_closest;
+        };
     }
-    return vec3(0.0);
+    return ray_travel;
+}
+
+float getLight(vec3 position)
+{ 
+    vec3 light_position = vec3(2.0, -3.0, 3.0);
+    vec3 light_direction = normalize(position - light_position);
+    vec3 normal = calculteNormal(position);
+    
+    float difuse = clamp(dot(normal, light_direction), 0.0, 1.0);
+    float d  = rayMarch(position + normal * shadow_bias, light_direction);
+    if (d < length(light_position - position)) difuse *= 1.0 - shadow_intensity;
+    
+    return difuse;
 }
 
 void main()
@@ -109,7 +106,15 @@ void main()
     vec4 camera_position = view_invers  * vec4(0.0, 0.0, 0.0, 1.0);
     vec4 ray_direction = camera_invers * vec4(uv, 0.0, 1.0);
     ray_direction = view_invers * vec4(ray_direction.xyz, 0.0);
+    ray_direction.xyz = normalize(ray_direction.xyz);
 
-    vec3 color = rayMarch(camera_position.xyz, normalize(ray_direction.xyz));
-    FragColor = vec4(color, .0f);
+    float d = rayMarch(camera_position.xyz, ray_direction.xyz);
+    if (d < far_distance) {
+        float occ = 1.0 - float(steps) / float(max_steps);
+        float difuse = getLight(camera_position.xyz + d * ray_direction.xyz);
+        vec3 col = vec3(difuse * occ);
+        FragColor = vec4(col, 1.0);
+    }else{
+        FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+    }
 } 

@@ -31,15 +31,20 @@ void Renderer::initRender() {
     glEnableVertexAttribArray(0);
 
     marcher.compile();
+
     step_location = glGetUniformLocation(marcher.id, "max_steps");
     epsilon_location = glGetUniformLocation(marcher.id, "epsilon");
     far_location = glGetUniformLocation(marcher.id, "far_distance");
+    shadow_intensity_location = glGetUniformLocation(marcher.id, "shadow_intensity");
+    shadow_bias_location = glGetUniformLocation(marcher.id, "shadow_bias");
 }
 
 void Renderer::preRender() {
     glUniform1i(step_location, max_steps);
     glUniform1f(epsilon_location, epsilon);
     glUniform1f(far_location, far_distance);
+    glUniform1f(shadow_intensity_location, shadow_intensity);
+    glUniform1f(shadow_bias_location, shadow_bias);
 }
 
 void Renderer::render() {

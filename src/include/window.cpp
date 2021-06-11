@@ -86,9 +86,13 @@ void Window::guiUpdate() {
         }
         if (ImGui::CollapsingHeader("Rederer")) {
             ImGui::InputFloat3("Camera position", &renderer.camera.camera_position[0]);
+            ImGui::Separator();
             ImGui::InputInt("Max steps", &renderer.max_steps);
             ImGui::InputFloat("Epsilon", &renderer.epsilon, renderer.epsilon*0.01f, 0.0f, "%g");
             ImGui::InputFloat("Far distance", &renderer.far_distance);
+            ImGui::Separator();
+            ImGui::SliderFloat("Shadow intensity", &renderer.shadow_intensity, 0.0f, 1.0f);
+            ImGui::InputFloat("Shadow bias", &renderer.shadow_bias, renderer.shadow_bias*0.01f, 0.0f, "%g");
         }
     ImGui::End();
 
