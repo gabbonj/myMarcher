@@ -85,7 +85,10 @@ void Window::guiUpdate() {
             ImGui::Text(std::to_string(1.0 / delta_time).c_str());
         }
         if (ImGui::CollapsingHeader("Rederer")) {
-
+            ImGui::InputFloat3("Camera position", &renderer.camera.camera_position[0]);
+            ImGui::InputInt("Max steps", &renderer.max_steps);
+            ImGui::InputFloat("Epsilon", &renderer.epsilon, renderer.epsilon*0.01f, 0.0f, "%g");
+            ImGui::InputFloat("Far distance", &renderer.far_distance);
         }
     ImGui::End();
 
