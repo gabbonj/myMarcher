@@ -57,6 +57,7 @@ float DE(vec3 pos) {
 
 float map_the_world(vec3 position){
     float fractal = DE(position);
+    // float sphere = distance_from_sphere(position, vec3(0.0), 0.5);
     return fractal;
 }
 
@@ -89,16 +90,22 @@ float rayMarch(vec3 origin, vec3 direction)
     return ray_travel;
 }
 
-float getLight(vec3 position)
+vec3 getLight(vec3 position)
 { 
     vec3 light_position = vec3(-2.0, 3.0, -3.0);
     vec3 light_direction = normalize(light_position - position);
+    vec3 light_color = vec3(1.0, 1.0, 1.0);
+    float brightness = 1.0;
     vec3 normal = calculteNormal(position);
     
-    float difuse = clamp(dot(normal, light_direction), 0.0, 1.0);
+    vec3 difuse = vec3(clamp(dot(normal, light_direction), 0.0, 1.0));
     float d  = rayMarch(position + normal * shadow_bias, light_direction);
-    if (d < length(light_position - position)) difuse *= 1.0 - shadow_intensity;
-    
+    if (d < length(light_position - position)) { 
+        difuse *= 1.0 - shadow_intensity;
+    }else{
+        difuse *= light_color * brightness;
+    }
+
     return difuse;
 }
 
@@ -112,7 +119,7 @@ void main()
     float d = rayMarch(camera_position.xyz, ray_direction.xyz);
     if (d < far_distance) {
         float occ = 1.0 - float(steps) / float(max_steps);
-        float difuse = getLight(camera_position.xyz + d * ray_direction.xyz);
+        vec3 difuse = getLight(camera_position.xyz + d * ray_direction.xyz);
         vec3 col = vec3(difuse * occ);
         FragColor = vec4(col, 1.0);
     }else{
