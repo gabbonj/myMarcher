@@ -24,13 +24,13 @@ mat2 rot(float alpha)
 
 float distance_from_sphere(in vec3 position, in vec3 centre, float radius)
 {
-    position.xz = mod(position.xz, 2.0);
+    // position.xz = mod(position.xz, 2.0);
 	return length(position - centre) - radius;
 }
 
 float DE(vec3 pos) {
 	float Bailout = 2.0;
-    float Power = 6.0;
+    float Power = 8.0;
     vec3 z = pos;
 	float dr = 1.0;
 	float r = 0.0;
@@ -56,7 +56,8 @@ float DE(vec3 pos) {
 }
 
 float map_the_world(vec3 position){
-    return DE(position);
+    float fractal = DE(position);
+    return fractal;
 }
 
 vec3 calculteNormal(in vec3 p)
@@ -90,8 +91,8 @@ float rayMarch(vec3 origin, vec3 direction)
 
 float getLight(vec3 position)
 { 
-    vec3 light_position = vec3(2.0, -3.0, 3.0);
-    vec3 light_direction = normalize(position - light_position);
+    vec3 light_position = vec3(-2.0, 3.0, -3.0);
+    vec3 light_direction = normalize(light_position - position);
     vec3 normal = calculteNormal(position);
     
     float difuse = clamp(dot(normal, light_direction), 0.0, 1.0);

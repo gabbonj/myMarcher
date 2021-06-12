@@ -4,6 +4,8 @@ Renderer::Renderer(const char* _marcher_path, Camera& _scene)
     : marcher(Shader("src\\shaders\\vertex.vs", _marcher_path)), camera(_scene){}
 
 void Renderer::initRender() {
+    glDisable(GL_DEPTH_TEST);
+
     float vertices[] = {
         1.0f,  1.0f, 0.0f,
         1.0f, -1.0f, 0.0f,
