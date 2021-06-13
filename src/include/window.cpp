@@ -16,31 +16,17 @@ void Window::processInput() {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        renderer.camera.setCameraPosition(
-            renderer.camera.camera_position + renderer.camera.camera_forward * 0.1f
-        );
+        renderer.camera.camera_position += renderer.camera.camera_forward * 0.1f;
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        renderer.camera.setCameraPosition(
-            renderer.camera.camera_position - renderer.camera.camera_forward * 0.1f
-        );
+        renderer.camera.camera_position -= renderer.camera.camera_forward * 0.1f;
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        renderer.camera.setCameraPosition(
-            renderer.camera.camera_position - 
-            glm::cross(renderer.camera.camera_forward, glm::vec3(0.0, 1.0, 0.0)) * 0.1f
-        );
+        renderer.camera.camera_position -= glm::cross(renderer.camera.camera_forward, glm::vec3(0.0, 1.0, 0.0)) * 0.1f;
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        renderer.camera.setCameraPosition(
-            renderer.camera.camera_position + 
-            glm::cross(renderer.camera.camera_forward, glm::vec3(0.0, 1.0, 0.0)) * 0.1f
-        );
+        renderer.camera.camera_position += glm::cross(renderer.camera.camera_forward, glm::vec3(0.0, 1.0, 0.0)) * 0.1f;
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-        renderer.camera.setCameraPosition(
-            renderer.camera.camera_position + glm::vec3(0.0, 1.0, 0.0) * 0.1f
-        );
+        renderer.camera.camera_position += glm::vec3(0.0, 1.0, 0.0) * 0.1f;
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
-        renderer.camera.setCameraPosition(
-            renderer.camera.camera_position - glm::vec3(0.0, 1.0, 0.0) * 0.1f
-        );
+            renderer.camera.camera_position -= glm::vec3(0.0, 1.0, 0.0) * 0.1f;
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
         renderer.camera.rotateCamera(renderer.camera.pitch, renderer.camera.yaw - 0.01f);
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -85,7 +71,7 @@ void Window::guiUpdate() {
             ImGui::Text(std::to_string(1.0 / delta_time).c_str());
         }
         if (ImGui::CollapsingHeader("Rederer")) {
-            ImGui::InputFloat3("Camera position", &renderer.camera.camera_position[0]);
+            ImGui::DragFloat3("Camera position", &renderer.camera.camera_position[0], 0.1f);
             ImGui::Separator();
             ImGui::InputInt("Max steps", &renderer.max_steps);
             ImGui::InputFloat("Epsilon", &renderer.epsilon, renderer.epsilon*0.01f, 0.0f, "%g");
@@ -93,6 +79,19 @@ void Window::guiUpdate() {
             ImGui::Separator();
             ImGui::SliderFloat("Shadow intensity", &renderer.shadow_intensity, 0.0f, 1.0f);
             ImGui::InputFloat("Shadow bias", &renderer.shadow_bias, renderer.shadow_bias*0.01f, 0.0f, "%g");
+        }
+    ImGui::End();
+
+    ImGui::Begin("Scene");
+        for (unsigned int i = 0; i < renderer.scene.scene_lights.size(); ++i) {
+            ImGui::Text("Light");
+            ImGui::SameLine();
+            ImGui::Text(std::to_string(i).c_str());
+            ImGui::PushID(i);
+            ImGui::DragFloat3("Position", &renderer.scene.scene_lights.at(i).position[0], 0.1f);
+            ImGui::SliderFloat3("Color", &renderer.scene.scene_lights.at(i).color[0], 0.0f, 1.0f);
+            ImGui::SliderFloat("Brightness", &renderer.scene.scene_lights.at(i).brightness, 0.0f, 1.0f);
+            ImGui::Separator();
         }
     ImGui::End();
 
@@ -132,6 +131,7 @@ bool Window::windowUpdate() {
 
     glfwGetWindowSize(window, &width, &height);
     glUniform2f(resolution_loc, float(width), float(height));
+    renderer.camera.setCameraPosition(renderer.camera.camera_position);
     glUniformMatrix4fv(renderer.inv_view_loc, 1, GL_FALSE, &renderer.camera.invers_view[0][0]);
     glUniformMatrix4fv(renderer.inv_proj_loc, 1, GL_FALSE, &renderer.camera.invers_proj[0][0]);
 
