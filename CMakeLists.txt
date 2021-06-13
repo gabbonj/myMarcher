@@ -16,7 +16,9 @@ add_library(
     src/include/window.h
     src/include/window.cpp
     src/include/shader.h
-    src/include/shader.cpp   
+    src/include/shader.cpp
+    src/include/scene.h
+    src/include/scene.cpp
 )
 include_directories(src/include)
 link_directories(src/include)

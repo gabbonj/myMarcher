@@ -11,6 +11,18 @@ uniform float far_distance;
 uniform float shadow_intensity;
 uniform float shadow_bias;
 
+struct Light {
+    vec3 position;
+    vec3 color;
+    float brightness;
+};
+
+// temporary
+Light l1 = Light(vec3(-2.0, 3.0, -3.0), vec3(1.0), 0.6);
+Light l2 = Light(vec3(2.0, -3.0, -3.0), vec3(1.0, 0.67, 0.0), 0.3);
+
+Light scene_lights[2] = Light[2](l1, l2);
+// temporary
 
 int max_iter = 512;
 int steps = 0;
@@ -90,20 +102,17 @@ float rayMarch(vec3 origin, vec3 direction)
     return ray_travel;
 }
 
-vec3 getLight(vec3 position)
+vec3 getLight(vec3 position, Light light)
 { 
-    vec3 light_position = vec3(-2.0, 3.0, -3.0);
-    vec3 light_direction = normalize(light_position - position);
-    vec3 light_color = vec3(1.0, 1.0, 1.0);
-    float brightness = 1.0;
+    vec3 light_direction = normalize(light.position - position);
     vec3 normal = calculteNormal(position);
     
     vec3 difuse = vec3(clamp(dot(normal, light_direction), 0.0, 1.0));
     float d  = rayMarch(position + normal * shadow_bias, light_direction);
-    if (d < length(light_position - position)) { 
+    if (d < length(light.position - position)) { 
         difuse *= 1.0 - shadow_intensity;
     }else{
-        difuse *= light_color * brightness;
+        difuse *= light.color * light.brightness;
     }
 
     return difuse;
@@ -118,8 +127,14 @@ void main()
 
     float d = rayMarch(camera_position.xyz, ray_direction.xyz);
     if (d < far_distance) {
+        vec3 current_position = camera_position.xyz + d * ray_direction.xyz;
         float occ = 1.0 - float(steps) / float(max_steps);
-        vec3 difuse = getLight(camera_position.xyz + d * ray_direction.xyz);
+        
+        vec3 difuse = vec3(0.0);
+        for (int i = 0; i < scene_lights.length(); ++i) {
+            difuse += getLight(current_position, scene_lights[i]);
+        }
+
         vec3 col = vec3(difuse * occ);
         FragColor = vec4(col, 1.0);
     }else{

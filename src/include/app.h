@@ -3,17 +3,15 @@
 
 #include <window.h>
 #include <renderer.h>
-#include <camera.h>
 
 class App{
 private:
     Window window;
     Renderer renderer;
-    Camera scene;
     bool running;
 
 public:
-    App(Window& _window, Renderer& _renderer, Camera& _scene);
+    App(Window& _window, Renderer& _renderer);
     void init();
     void mainloop();
     void cleanup();

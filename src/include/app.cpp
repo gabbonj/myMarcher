@@ -1,7 +1,7 @@
 #include <app.h>
 
-App::App(Window& _window, Renderer& _renderer, Camera& _scene) :
-    window(_window), renderer(_renderer), scene(_scene), running(false) { }
+App::App(Window& _window, Renderer& _renderer) :
+    window(_window), renderer(_renderer), running(false) { }
 
 void App::init() {
     running = true;

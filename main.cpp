@@ -9,7 +9,7 @@ int main(int argc, char const *argv[])
     Renderer renderer("src\\shaders\\marcher.fs", camera);
     Window window(800, 600, "Marching", renderer);
 
-    App app(window, renderer, camera);
+    App app(window, renderer);
     app.init();
     app.mainloop();
     app.cleanup();
