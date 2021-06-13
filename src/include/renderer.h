@@ -3,6 +3,7 @@
 
 #include <shader.h>
 #include <camera.h>
+#include <scene.h>
 #include <glad/glad.h>
 
 class Renderer{
@@ -13,18 +14,21 @@ private:
     unsigned int far_location;
     unsigned int shadow_intensity_location;
     unsigned int shadow_bias_location;
+    unsigned int light_buffer_location;
+    unsigned int light_number_location;
 
 public:
     unsigned int inv_view_loc, inv_proj_loc;
     Shader marcher;
     Camera camera;
+    Scene scene;
     int max_steps = 256;
     float epsilon = 0.001f;
     float far_distance = 100.0f;
     float shadow_intensity = 0.8f;
     float shadow_bias = 0.01f;
     
-    Renderer(const char* _marcher_path, Camera& _scene);
+    Renderer(const char* _marcher_path, Camera& _camera, Scene& _scene);
     void initRender();
     void preRender();
     void render();

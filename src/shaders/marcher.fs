@@ -1,15 +1,9 @@
-#version 330 core
+#version 420
+
+#define MAX_LIGHTS 10
 
 out vec4 FragColor;
 in vec2 uv;
-
-uniform mat4 view_invers;
-uniform mat4 camera_invers;
-uniform int max_steps;
-uniform float epsilon;
-uniform float far_distance;
-uniform float shadow_intensity;
-uniform float shadow_bias;
 
 struct Light {
     vec3 position;
@@ -17,12 +11,18 @@ struct Light {
     float brightness;
 };
 
-// temporary
-Light l1 = Light(vec3(-2.0, 3.0, -3.0), vec3(1.0), 0.6);
-Light l2 = Light(vec3(2.0, -3.0, -3.0), vec3(1.0, 0.67, 0.0), 0.3);
 
-Light scene_lights[2] = Light[2](l1, l2);
-// temporary
+uniform int light_number;
+layout (binding = 1) uniform lights {
+    Light scene_lights[MAX_LIGHTS];
+};
+uniform mat4 view_invers;
+uniform mat4 camera_invers;
+uniform int max_steps;
+uniform float epsilon;
+uniform float far_distance;
+uniform float shadow_intensity;
+uniform float shadow_bias;
 
 int max_iter = 512;
 int steps = 0;
@@ -131,10 +131,9 @@ void main()
         float occ = 1.0 - float(steps) / float(max_steps);
         
         vec3 difuse = vec3(0.0);
-        for (int i = 0; i < scene_lights.length(); ++i) {
+        for (int i = 0; i < light_number; i++) {
             difuse += getLight(current_position, scene_lights[i]);
         }
-
         vec3 col = vec3(difuse * occ);
         FragColor = vec4(col, 1.0);
     }else{

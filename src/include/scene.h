@@ -8,8 +8,15 @@
 struct Light
 {
     glm::vec3 position;
+    float p1; // memory padding 
     glm::vec3 color;
     float brightness;
+
+    Light(glm::vec3 _position, glm::vec3 _color, float _brightness) {
+        position = _position;
+        color = _color;
+        brightness = _brightness;
+    }
 };
 
 
