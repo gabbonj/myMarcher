@@ -23,6 +23,7 @@ uniform float epsilon;
 uniform float far_distance;
 uniform float shadow_intensity;
 uniform float shadow_bias;
+uniform vec3 light_attenuation;
 
 int max_iter = 512;
 int steps = 0;
@@ -109,10 +110,12 @@ vec3 getLight(vec3 position, Light light)
     
     vec3 difuse = vec3(clamp(dot(normal, light_direction), 0.0, 1.0));
     float d  = rayMarch(position + normal * shadow_bias, light_direction);
-    if (d < length(light.position - position)) { 
+    float light_distance = length(light.position - position);
+    if (d < light_distance) { 
         difuse *= 1.0 - shadow_intensity;
     }else{
-        difuse *= light.color * light.brightness;
+        float attenuation = 1.0 / (light_attenuation.x + light_attenuation.y * light_distance + light_attenuation.z * light_distance * light_distance);
+        difuse *= light.color * light.brightness * attenuation;
     }
 
     return difuse;

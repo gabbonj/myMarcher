@@ -77,6 +77,7 @@ void Window::guiUpdate() {
             ImGui::InputFloat("Epsilon", &renderer.epsilon, renderer.epsilon*0.01f, 0.0f, "%g");
             ImGui::InputFloat("Far distance", &renderer.far_distance);
             ImGui::Separator();
+            ImGui::InputFloat3("Attenuation constants", &renderer.attenuation[0], "%g");
             ImGui::SliderFloat("Shadow intensity", &renderer.shadow_intensity, 0.0f, 1.0f);
             ImGui::InputFloat("Shadow bias", &renderer.shadow_bias, renderer.shadow_bias*0.01f, 0.0f, "%g");
         }
