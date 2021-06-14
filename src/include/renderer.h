@@ -17,6 +17,7 @@ private:
     unsigned int light_buffer_location;
     unsigned int light_number_location;
     unsigned int attenuation_location;
+    unsigned int gamma_location;
 
 public:
     unsigned int inv_view_loc, inv_proj_loc;
@@ -26,9 +27,10 @@ public:
     int max_steps = 256;
     float epsilon = 0.001f;
     float far_distance = 100.0f;
-    float shadow_intensity = 0.9f;
+    float shadow_intensity = 1.0f;
     float shadow_bias = 0.01f;
-    glm::vec3 attenuation = glm::vec3(1.0f, 0.09f, 0.032f);
+    glm::vec3 attenuation = glm::vec3(1.0f, 0.22f, 0.20f);
+    float gamma = 2.2f;
     
     Renderer(const char* _marcher_path, Camera& _camera, Scene& _scene);
     void initRender();

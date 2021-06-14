@@ -48,6 +48,7 @@ void Renderer::initRender() {
     shadow_bias_location = glGetUniformLocation(marcher.id, "shadow_bias");
     attenuation_location = glGetUniformLocation(marcher.id, "light_attenuation");
     light_number_location = glGetUniformLocation(marcher.id, "light_number");
+    gamma_location = glGetUniformLocation(marcher.id, "gamma");
 }
 
 void Renderer::preRender() {
@@ -59,6 +60,7 @@ void Renderer::preRender() {
     glUniform1i(light_number_location, scene.scene_lights.size());
     glUniform3f(attenuation_location, attenuation.x, attenuation.y, attenuation.z);
     glBufferData(GL_UNIFORM_BUFFER, sizeof(Light) * scene.scene_lights.size(), &scene.scene_lights[0], GL_DYNAMIC_DRAW);
+    glUniform1f(gamma_location, gamma);
 }
 
 void Renderer::render() {

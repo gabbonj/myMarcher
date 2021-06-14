@@ -24,6 +24,7 @@ uniform float far_distance;
 uniform float shadow_intensity;
 uniform float shadow_bias;
 uniform vec3 light_attenuation;
+uniform float gamma;
 
 int max_iter = 512;
 int steps = 0;
@@ -138,6 +139,7 @@ void main()
             difuse += getLight(current_position, scene_lights[i]);
         }
         vec3 col = vec3(difuse * occ);
+        col = pow(col, vec3(1.0/gamma));
         FragColor = vec4(col, 1.0);
     }else{
         FragColor = vec4(0.0, 0.0, 0.0, 1.0);
