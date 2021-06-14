@@ -25,6 +25,7 @@ uniform float shadow_intensity;
 uniform float shadow_bias;
 uniform vec3 light_attenuation;
 uniform float gamma;
+uniform float shadow_k;
 
 int max_iter = 512;
 int steps = 0;
@@ -104,20 +105,36 @@ float rayMarch(vec3 origin, vec3 direction)
     return ray_travel;
 }
 
+float softShadow(vec3 origin, vec3 direction, float light_distance) {
+    float ray_travel = 0.0;
+    float softness = 1.0;
+
+    for (int i = 0; i < max_steps; ++i) {
+        vec3 position = origin + ray_travel * direction;
+        float scene_distance = map_the_world(position);
+        if (scene_distance < epsilon){
+            return 1.0 - shadow_intensity;
+        }
+        softness = min(softness, shadow_k * scene_distance / ray_travel);
+        ray_travel += scene_distance;   
+        if (ray_travel > light_distance){
+            break;
+        }
+    }
+    return softness;
+}
+
 vec3 getLight(vec3 position, Light light)
 { 
     vec3 light_direction = normalize(light.position - position);
     vec3 normal = calculteNormal(position);
     
     vec3 difuse = vec3(clamp(dot(normal, light_direction), 0.0, 1.0));
-    float d  = rayMarch(position + normal * shadow_bias, light_direction);
     float light_distance = length(light.position - position);
-    if (d < light_distance) { 
-        difuse *= 1.0 - shadow_intensity;
-    }else{
-        float attenuation = 1.0 / (light_attenuation.x + light_attenuation.y * light_distance + light_attenuation.z * light_distance * light_distance);
-        difuse *= light.color * light.brightness * attenuation;
-    }
+    difuse *= softShadow(position + normal * shadow_bias, light_direction, light_distance);
+
+    float attenuation = 1.0 / (light_attenuation.x + light_attenuation.y * light_distance + light_attenuation.z * light_distance * light_distance);
+    difuse *=  light.color * light.brightness * attenuation;
 
     return difuse;
 }
