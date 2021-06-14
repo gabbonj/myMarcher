@@ -53,6 +53,7 @@ void Renderer::initRender() {
 }
 
 void Renderer::preRender() {
+    // setting the uniforms
     glUniform1i(step_location, max_steps);
     glUniform1f(epsilon_location, epsilon);
     glUniform1f(far_location, far_distance);
@@ -66,9 +67,11 @@ void Renderer::preRender() {
 }
 
 void Renderer::render() {
+    //clearing the screen
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
 
+    // drawing the rendering quad
     marcher.use();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 }

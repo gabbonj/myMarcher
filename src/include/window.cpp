@@ -109,6 +109,7 @@ void Window::guiCleanup() {
 }
 
 void Window::windowInit() {
+    // glfw init
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -117,6 +118,7 @@ void Window::windowInit() {
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    // loading glad
     gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
     
     renderer.initRender();
@@ -132,17 +134,20 @@ bool Window::windowUpdate() {
     if (glfwWindowShouldClose(window)) return false;
     processInput();
 
+    // updating the screenspace
     glfwGetWindowSize(window, &width, &height);
     glUniform2f(resolution_loc, float(width), float(height));
     renderer.camera.setCameraPosition(renderer.camera.camera_position);
     glUniformMatrix4fv(renderer.inv_view_loc, 1, GL_FALSE, &renderer.camera.invers_view[0][0]);
     glUniformMatrix4fv(renderer.inv_proj_loc, 1, GL_FALSE, &renderer.camera.invers_proj[0][0]);
 
+    // rendering
     guiPreUpdate();
     renderer.preRender();
     renderer.render();
     guiUpdate();
 
+    // preparing for the next frame
     glfwSwapBuffers(window);
     glfwPollEvents();
     delta_time = glfwGetTime() - current_time;

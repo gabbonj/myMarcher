@@ -17,7 +17,6 @@ Camera::Camera(glm::vec3 _camera_position, glm::vec3 _camera_forward)
 void Camera::updateCamera(glm::vec3 _camera_position, glm::vec3 _camera_forward) {
     camera_position = _camera_position;
     camera_forward = _camera_forward;
-    //rimettere camera_position
     invers_view = glm::inverse(glm::lookAt(camera_position, camera_position + camera_forward, glm::vec3(0.0f, 1.0f, 0.0f)));
 }
 
