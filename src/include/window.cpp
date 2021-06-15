@@ -86,15 +86,25 @@ void Window::guiUpdate() {
     ImGui::End();
 
     ImGui::Begin("Scene");
-        for (unsigned int i = 0; i < renderer.scene.scene_lights.size(); ++i) {
-            ImGui::Text("Light");
-            ImGui::SameLine();
-            ImGui::Text(std::to_string(i).c_str());
-            ImGui::PushID(i);
-            ImGui::DragFloat3("Position", &renderer.scene.scene_lights.at(i).position[0], 0.1f);
-            ImGui::SliderFloat3("Color", &renderer.scene.scene_lights.at(i).color[0], 0.0f, 1.0f);
-            ImGui::SliderFloat("Brightness", &renderer.scene.scene_lights.at(i).brightness, 0.0f, 1.0f);
+        if (ImGui::CollapsingHeader("Lights")){
+            if (ImGui::Button("Add"))
+                renderer.scene.addLight(Light(glm::vec3(0.0), glm::vec3(1.0), 0.5f));
             ImGui::Separator();
+            for (unsigned int i = 0; i < renderer.scene.scene_lights.size(); ++i) {
+                ImGui::Text("Light");
+                ImGui::SameLine();
+                ImGui::Text(std::to_string(i).c_str());
+                ImGui::PushID(i);
+                ImGui::DragFloat3("Position", &renderer.scene.scene_lights.at(i).position[0], 0.1f);
+                ImGui::SliderFloat3("Color", &renderer.scene.scene_lights.at(i).color[0], 0.0f, 1.0f);
+                ImGui::SliderFloat("Brightness", &renderer.scene.scene_lights.at(i).brightness, 0.0f, 1.0f);
+                if (ImGui::Button("Remove")) 
+                    renderer.scene.removeLight(i);
+                ImGui::SameLine();
+                if (ImGui::Button("Duplicate")) 
+                    renderer.scene.addLight(renderer.scene.scene_lights.at(i));
+                ImGui::Separator();
+            }
         }
     ImGui::End();
 

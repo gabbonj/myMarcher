@@ -28,6 +28,7 @@ public:
     Scene(std::vector<Light> _scene_lights);
     void loadLights(std::vector<Light> _scene_lights);
     void addLight(Light light);
+    void removeLight(unsigned int index);
 };
 
 #endif

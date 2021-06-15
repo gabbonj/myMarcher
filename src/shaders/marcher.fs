@@ -27,7 +27,7 @@ uniform vec3 light_attenuation;
 uniform float gamma;
 uniform float shadow_k;
 
-int max_iter = 512;
+int max_iter = 16;
 int steps = 0;
 
 mat2 rot(float alpha)

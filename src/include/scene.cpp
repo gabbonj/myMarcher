@@ -13,3 +13,7 @@ void Scene::loadLights(std::vector<Light> _scene_lights) {
 void Scene::addLight(Light light) {
     scene_lights.push_back(light);
 }
+
+void Scene::removeLight(unsigned int index) {
+    scene_lights.erase(scene_lights.begin() + index);
+}
