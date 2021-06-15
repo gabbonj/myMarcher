@@ -26,8 +26,9 @@ uniform float shadow_bias;
 uniform vec3 light_attenuation;
 uniform float gamma;
 uniform float shadow_k;
+uniform vec3 background_color;
 
-int max_iter = 16;
+int max_iter = 14;
 int steps = 0;
 
 mat2 rot(float alpha)
@@ -42,6 +43,8 @@ float distance_from_sphere(in vec3 position, in vec3 centre, float radius)
     // position.xz = mod(position.xz, 2.0);
 	return length(position - centre) - radius;
 }
+
+
 
 float DE(vec3 pos) {
 	float Bailout = 2.0;
@@ -159,6 +162,6 @@ void main()
         col = pow(col, vec3(1.0/gamma));
         FragColor = vec4(col, 1.0);
     }else{
-        FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        FragColor = vec4(background_color, 1.0);
     }
 } 

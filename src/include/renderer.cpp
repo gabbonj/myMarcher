@@ -50,6 +50,7 @@ void Renderer::initRender() {
     light_number_location = glGetUniformLocation(marcher.id, "light_number");
     gamma_location = glGetUniformLocation(marcher.id, "gamma");
     shadow_k_location = glGetUniformLocation(marcher.id, "shadow_k");
+    background_color_location = glGetUniformLocation(marcher.id, "background_color");
 }
 
 void Renderer::preRender() {
@@ -64,6 +65,7 @@ void Renderer::preRender() {
     glBufferData(GL_UNIFORM_BUFFER, sizeof(Light) * scene.scene_lights.size(), &scene.scene_lights[0], GL_DYNAMIC_DRAW);
     glUniform1f(gamma_location, gamma);
     glUniform1f(shadow_k_location, shadow_k);
+    glUniform3f(background_color_location, background_color.x, background_color.y, background_color.z);
 }
 
 void Renderer::render() {

@@ -19,6 +19,7 @@ private:
     unsigned int attenuation_location;
     unsigned int gamma_location;
     unsigned int shadow_k_location;
+    unsigned int background_color_location;
 
 public:
     unsigned int inv_view_loc, inv_proj_loc;
@@ -33,6 +34,7 @@ public:
     glm::vec3 attenuation = glm::vec3(1.0f, 0.22f, 0.20f);
     float gamma = 2.2f;
     float shadow_k = 2.0f;
+    glm::vec3 background_color = glm::vec3(0.0f);
     
     Renderer(const char* _marcher_path, Camera& _camera, Scene& _scene);
     void initRender();

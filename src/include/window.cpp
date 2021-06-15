@@ -82,6 +82,7 @@ void Window::guiUpdate() {
             ImGui::InputFloat("Shadow bias", &renderer.shadow_bias, renderer.shadow_bias*0.01f, 0.0f, "%g");
             ImGui::DragFloat("Shadow softness", &renderer.shadow_k, 0.1f);
             ImGui::DragFloat("Gamma", &renderer.gamma, 0.05f);
+            ImGui::ColorEdit3("Background color", &renderer.background_color[0]);;
         }
     ImGui::End();
 
@@ -97,7 +98,7 @@ void Window::guiUpdate() {
                 ImGui::PushID(i);
                 ImGui::DragFloat3("Position", &renderer.scene.scene_lights.at(i).position[0], 0.1f);
                 ImGui::SliderFloat3("Color", &renderer.scene.scene_lights.at(i).color[0], 0.0f, 1.0f);
-                ImGui::SliderFloat("Brightness", &renderer.scene.scene_lights.at(i).brightness, 0.0f, 1.0f);
+                ImGui::SliderFloat("Brightness", &renderer.scene.scene_lights.at(i).brightness, 0.0f, 3.0f);
                 if (ImGui::Button("Remove")) 
                     renderer.scene.removeLight(i);
                 ImGui::SameLine();
